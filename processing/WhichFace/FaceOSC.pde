@@ -6,22 +6,33 @@ class FaceOSC {
   FaceOSC(Object parent){
     // receive messages ar port 12000, currently unused
     oscP5 = new OscP5(parent,12000);
-    // port to send messages to, must be same as "In Port" in Unity
-    // 127.0.0.1 is the special address meaning the computer this is 
-    // running on
-    destination = new NetAddress("127.0.0.1",13000);
+    // ip address and port to send messages to
+    destination = new NetAddress("localhost",11000);
   }
   
   void sendFaceData() {
-    // OSC messages can be a combination of data typrd likestrings, 
-    // ints, floats etc.
-    // However it has to be extracted by the OnRecieve() function
-    // in Unity in the same order of data types that appear here.
     
-    OscMessage myMessage = new OscMessage("/pc");
-    myMessage.add(123); 
+    /* OSC messages can be combination of data types like int, string, float
+     * however the order of these data types must be extracted the same way
+     * on the receiver (Unity)
+     * For faceData the structure is:
+     * - number of faces
+     * - face id, x-coord, y-coord (repeated)
+     * x and y coordinates are according to processing's pixel coordinates
+     */
+    
+    OscMessage message = new OscMessage("/faceData");
+    
+    message.add(faceList.size());
+    for(Face f : faceList){
+      message.add(f.id);
+      float xCentre = f.r.x + f.r.width*0.5;
+      float yCentre = height/scl - (f.r.y + f.r.height*0.5); //flip y to match unity axis
+      message.add(xCentre);
+      message.add(yCentre);
+    }
   
     /* send the message */
-    oscP5.send(myMessage, destination); 
+    oscP5.send(message, destination); 
   }  
 }

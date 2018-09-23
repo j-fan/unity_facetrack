@@ -49,7 +49,7 @@ public class RecieveFaceData : MonoBehaviour {
             FaceData face = new FaceData(faceID, xCoord, yCoord);
             faces.Add(face);
 
-            print(faceID + " " + xCoord + " " + yCoord);
+            //print(faceID + " " + xCoord + " " + yCoord);
         }
     }
 
